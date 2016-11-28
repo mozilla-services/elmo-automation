@@ -2,12 +2,24 @@ version: '2'
 services:
   hg:
     build: hgmo
-    command: hg --cwd /repos serve -p 8001 --webdir-conf=webdir.conf
+    command: hg --cwd /data/repos serve -p 8001 --webdir-conf=../webdir.conf
     ports:
      - "8001:8001"
     volumes:
-     - ./hgmo/repos:/repos
+     - ./stage/repos:/data/repos
      - ~/.mozbuild/version-control-tools:/version-control-tools
+  bb:
+    build: 
+      context: .
+      dockerfile: bb/Dockerfile
+    command: ls
+    volumes:
+      - ./stage/repos:/data/repos
+      - ./bb/master-ball:/data/master-ball
+      - ./bb/slave-ball:/data/slave-ball
+      - ./stage/builds:/data/builds
+    links:
+      - hg
   # elasticsearch:
   #   image: elasticsearch
   #   ports:
