@@ -1,0 +1,14 @@
+version: '2'
+services:
+  hg:
+    build: hgmo
+    command: hg --cwd /repos serve -p 8001 --webdir-conf=webdir.conf
+    ports:
+     - "8001:8001"
+    volumes:
+     - ./hgmo/repos:/repos
+     - ~/.mozbuild/version-control-tools:/version-control-tools
+  # elasticsearch:
+  #   image: elasticsearch
+  #   ports:
+  #   - "9200:9200"
