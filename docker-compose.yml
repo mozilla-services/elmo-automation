@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: a10n/Dockerfile
-    command: bash
+    command: /data/entrypoint.sh
     volumes_from:
       - hg
     volumes:
