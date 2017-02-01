@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
   hg:
     build: hgmo
@@ -8,6 +8,8 @@ services:
     volumes:
      - ./stage/repos:/data/repos
      - ~/.mozbuild/version-control-tools:/version-control-tools
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/"]
   a10n:
     build:
       context: .
@@ -19,6 +21,11 @@ services:
      - ./a10n/a10n:/data/a10n
     links:
       - rabbitmq
+    depends_on:
+      # rabbitmq:
+      #   condition: service_healthy
+      hg:
+        condition: service_healthy
   bb:
     build: 
       context: .
@@ -33,14 +40,21 @@ services:
     links:
       - hg
       - elasticsearch
+    depends_on:
+      hg:
+        condition: service_healthy
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:management
     ports:
       - 5672:5672
       - 15672:15672
     environment:
       - RABBITMQ_DEFAULT_USER=foopy
       - RABBITMQ_DEFAULT_PASS=foopy
+    # Doing healthcheck would be great, if it worked.
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "-ufopy:foopy", "http://localhost:15672/api/overview"]
+    #   retries: 5
   elasticsearch:
     image: elasticsearch
     ports:
