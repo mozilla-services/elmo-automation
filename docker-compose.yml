@@ -35,7 +35,6 @@ services:
       - hg
     volumes:
       - ./bb/master-ball:/data/master-ball
-      - ./bb/slave-ball:/data/slave-ball
       - ./stage/builds:/data/builds
     links:
       - hg
