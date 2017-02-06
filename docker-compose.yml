@@ -6,17 +6,21 @@ services:
     ports:
      - "8001:8001"
     volumes:
-     - ./stage/repos:/data/repos
+     - ./stage/hgmo:/data/repos
      - ~/.mozbuild/version-control-tools:/version-control-tools
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/"]
+  storage:
+    image: centos:7
+    volumes:
+      - ./stage/repos:/data/repos
   a10n:
     build:
       context: .
       dockerfile: a10n/Dockerfile
     command: /data/entrypoint.sh
     volumes_from:
-      - hg
+      - storage
     volumes:
      - ./a10n/a10n:/data/a10n
     links:
@@ -32,7 +36,7 @@ services:
       dockerfile: bb/Dockerfile
     command: /data/entrypoint.sh
     volumes_from:
-      - hg
+      - storage
     volumes:
       - ./bb/master-ball:/data/master-ball
       - ./stage/builds:/data/builds
