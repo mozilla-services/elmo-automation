@@ -59,7 +59,7 @@ services:
     #   test: ["CMD", "curl", "-f", "-ufopy:foopy", "http://localhost:15672/api/overview"]
     #   retries: 5
   elasticsearch:
-    image: elasticsearch
+    image: elasticsearch:2.4.5
     ports:
     - "9200:9200"
 # volumes:
