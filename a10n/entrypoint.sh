@@ -18,7 +18,7 @@ trap "cleanup_bots" SIGTERM
 cd /data/a10n
 
 # twistd background automatically, logs to twistd.log
-twistd get-pushes
+PYTHONPATH=. twistd get-pushes
 
 ./scripts/a10n hg > hg.log &
 HGPID=$!
