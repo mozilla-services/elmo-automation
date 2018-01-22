@@ -1,5 +1,11 @@
 version: '2.1'
 services:
+  base:
+    build:
+      context: .
+      dockerfile: ./base/Dockerfile
+    image: local/elmo_base
+
   hg:
     build: hgmo
     command: hg --cwd /data/repos serve -p 8001 --webdir-conf=../webdir.conf

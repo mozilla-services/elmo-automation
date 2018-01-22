@@ -1,4 +1,4 @@
-FROM pike/centos7-python2.7.12
+FROM local/elmo_base
 # set up virtualenvs for master and slave
 RUN pip install -U virtualenv
 WORKDIR /data/
