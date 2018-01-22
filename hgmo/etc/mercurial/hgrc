@@ -1,4 +1,4 @@
 [extensions]
-hgmo = /version-control-tools/hgext/hgmo
-pushlog = /version-control-tools/hgext/pushlog
-pushlog-feed = /version-control-tools/hgext/pushlog-legacy/pushlog-feed.py
+hgmo = /app/version-control-tools/hgext/hgmo
+pushlog = /app/version-control-tools/hgext/pushlog
+pushlog-feed = /app/version-control-tools/hgext/pushlog-legacy/pushlog-feed.py

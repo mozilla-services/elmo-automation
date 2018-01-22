@@ -13,9 +13,9 @@ cleanup_bots() {
 trap "cleanup_bots" SIGTERM
 
 # activate virtualenv
-. /data/env/bin/activate
+. /app/env/bin/activate
 
-cd /data/a10n
+cd /app/a10n
 
 # twistd background automatically, logs to twistd.log
 PYTHONPATH=. twistd get-pushes

@@ -8,12 +8,13 @@ services:
 
   hg:
     build: hgmo
-    command: hg --cwd /data/repos serve -p 8001 --webdir-conf=../webdir.conf
+    command: hg --cwd /data/repos serve -p 8001 --webdir-conf=/app/webdir.conf
     ports:
      - "8001:8001"
     volumes:
+     # not using storage, those are reading the client-side, we need upstream
      - ./stage/hgmo:/data/repos
-     - ~/.mozbuild/version-control-tools:/version-control-tools
+     - ~/.mozbuild/version-control-tools:/app/version-control-tools
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/"]
   storage:
@@ -24,11 +25,11 @@ services:
     build:
       context: .
       dockerfile: a10n/Dockerfile
-    command: /data/entrypoint.sh
+    command: /app/entrypoint.sh
     volumes_from:
       - storage
     volumes:
-     - ./a10n/a10n:/data/a10n
+     - ./a10n/a10n:/app/a10n
     links:
       - rabbitmq
     depends_on:
@@ -40,11 +41,11 @@ services:
     build: 
       context: .
       dockerfile: bb/Dockerfile
-    command: /data/entrypoint.sh
+    command: /app/entrypoint.sh
     volumes_from:
       - storage
     volumes:
-      - ./bb/master-ball:/data/master-ball
+      - ./bb/master-ball:/app/master-ball
       - ./stage/builds:/data/builds
     links:
       - hg

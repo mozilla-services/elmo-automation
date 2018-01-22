@@ -11,9 +11,9 @@ cleanup_bots() {
 trap "cleanup_bots" SIGTERM
 
 # activate virtualenv
-. /data/venv/bin/activate
+. /app/venv/bin/activate
 
-cd /data/
+cd /app/
 
 # start master and slave
 ./master-ball/scripts/buildbot start master-ball/test-master
