@@ -35,6 +35,8 @@ services:
     build: 
       context: .
       dockerfile: bb/Dockerfile
+      args:
+        shares: /data/shares
     command: /app/entrypoint.sh
     volumes:
       - ./bb/master-ball:/app/master-ball
