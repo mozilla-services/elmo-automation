@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.4'
 services:
   base:
     build:
@@ -17,42 +17,34 @@ services:
      - ~/.mozbuild/version-control-tools:/app/version-control-tools
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/"]
-  storage:
-    image: centos:7
-    volumes:
-      - ./stage/repos:/data/repos
   a10n:
     build:
       context: .
       dockerfile: a10n/Dockerfile
     command: /app/entrypoint.sh
-    volumes_from:
-      - storage
     volumes:
      - ./a10n/a10n:/app/a10n
+     - ./stage/repos:/data/repos
     links:
       - rabbitmq
     depends_on:
       # rabbitmq:
       #   condition: service_healthy
-      hg:
-        condition: service_healthy
+      - hg
   bb:
     build: 
       context: .
       dockerfile: bb/Dockerfile
     command: /app/entrypoint.sh
-    volumes_from:
-      - storage
     volumes:
       - ./bb/master-ball:/app/master-ball
       - ./stage/builds:/data/builds
+      - ./stage/repos:/data/repos
     links:
       - hg
       - elasticsearch
     depends_on:
-      hg:
-        condition: service_healthy
+      - hg
   rabbitmq:
     image: rabbitmq:management
     ports:
