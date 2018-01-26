@@ -22,8 +22,15 @@ services:
       context: .
       dockerfile: a10n/Dockerfile
     command: /app/entrypoint.sh
+    environment:
+      - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
+      - ELMO_DB_HOST=${ELMO_DB_HOST}
+      - ELMO_DB_NAME=${ELMO_DB_NAME}
+      - ELMO_DB_USER=${ELMO_DB_USER}
+      - ELMO_DB_PASSWORD=${ELMO_DB_PASSWORD}
+      - ELMO_SECRET_KEY="still just testing"
+      - ELMO_REPOSITORY_BASE=/data/repos
     volumes:
-     - ./a10n/a10n:/app/a10n
      - ./stage/repos:/data/repos
     links:
       - rabbitmq

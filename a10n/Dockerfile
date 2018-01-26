@@ -4,5 +4,6 @@ RUN pip install -U virtualenv
 RUN virtualenv env
 COPY ./a10n/a10n/requirements/automation.txt env/requirements.txt
 RUN ./env/bin/pip install -r env/requirements.txt
-COPY ./a10n/entrypoint.sh /app
+COPY ./a10n/entrypoint.sh .
 USER app
+COPY --chown=app:app ./a10n/a10n/ ./a10n/
