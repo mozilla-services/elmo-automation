@@ -44,6 +44,7 @@ services:
       dockerfile: bb/Dockerfile
       args:
         shares: /data/shares
+        master: test-master
     command: /app/entrypoint.sh
     environment:
       - ELMO_DB_HOST=${ELMO_DB_HOST}
