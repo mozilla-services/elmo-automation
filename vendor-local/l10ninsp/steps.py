@@ -18,6 +18,40 @@ import logger
 import util
 
 
+class ElasticSetup(BuildStep):
+    '''Ensure that elasticsearch index and mapping are set up right.'''
+    description = ["ElasticSearch", "Setup"]
+    def start(self):
+        loog = self.addLog('stdio')
+        from django.conf import settings
+        import elasticsearch
+        es = elasticsearch.Elasticsearch(hosts=[settings.ES_COMPARE_HOST])
+
+        if es.indices.exists(index=settings.ES_COMPARE_INDEX):
+            loog.addStdout('Index exists\n')
+        else:
+            loog.addStdout('Creating index\n')
+            es.indices.create(index=settings.ES_COMPARE_INDEX)
+
+        properties = {
+            # the actual compare-locales data, just store as object
+            "details": {
+                "type": "object",
+                "enabled": False
+            },
+            "run": {"type": "integer"}  # match SQL INT()
+        }
+        es.indices.put_mapping(
+            'comparison',
+            {'properties': properties},
+            index=settings.ES_COMPARE_INDEX,
+        )
+        loog.addStdout('Mapping updated\n')
+        self.step_status.setText(["ES", "setup"])
+
+        self.finished(SUCCESS)
+
+
 class InspectLocale(LoggingBuildStep):
     """
     This class hooks up CompareLocales in the build master.

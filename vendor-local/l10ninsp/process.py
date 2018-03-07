@@ -8,7 +8,7 @@ from buildbot.process.properties import WithProperties
 
 from twisted.python import log
 
-from l10ninsp.steps import InspectLocale
+from l10ninsp.steps import InspectLocale, ElasticSetup
 
 
 class Factory(factory.BuildFactory):
@@ -28,6 +28,7 @@ class Factory(factory.BuildFactory):
         return b
 
     def createSteps(self, request):
+        elastic = ((ElasticSetup, {}),)
         revs = request.properties.getProperty('revisions')
         if revs is None:
             revs = ['en', 'l10n']
@@ -79,4 +80,4 @@ class Factory(factory.BuildFactory):
                     'locale': WithProperties('%(locale)s'),
                     'tree': tree,
                     }),)
-        return shareSteps + sourceSteps + inspectSteps
+        return elastic + shareSteps + sourceSteps + inspectSteps
