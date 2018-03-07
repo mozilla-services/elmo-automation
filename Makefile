@@ -79,3 +79,12 @@ define DTD
 <!ENTITY entry "$(AB_CD) value">
 endef
 export INI ALL PROPS DTD
+
+
+docker-images:: bb-image a10n-image
+
+bb-image::
+	docker build -t elmo-bb --build-arg shares=/home/app/shares -f bb/Dockerfile .
+
+a10n-image::
+	docker build -t elmo-a10n -f a10n/Dockerfile .
