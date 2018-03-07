@@ -1,4 +1,17 @@
 .env
 stage/
-bb/master-ball/
 a10n/a10n/
+slave
+*.pyc
+twistd.log
+twistd.pid
+twisted/plugins/dropin.cache
+
+shared/local.py
+
+# generated files in *-master
+*-master/Makefile.sample
+*-master/buildbot.tac
+*-master/changes.pck
+*-master/master.cfg.sample
+*-master/public_html
