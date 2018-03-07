@@ -1,6 +1,6 @@
 # makefile to help with stage creation and general set up
 
-setup:: a10n/a10n bb/master-ball
+setup:: vendor-local/elmo
 setup:: stage/venv workdirs stage/repos
 
 VCT ?= ~/.mozbuild/version-control-tools

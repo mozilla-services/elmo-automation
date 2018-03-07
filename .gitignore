@@ -15,3 +15,7 @@ shared/local.py
 *-master/changes.pck
 *-master/master.cfg.sample
 *-master/public_html
+
+hg.log
+twisted/plugins/dropin.cache
+a10n/settings/local.py
