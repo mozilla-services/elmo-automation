@@ -21,7 +21,6 @@ services:
     build:
       context: .
       dockerfile: a10n/Dockerfile
-    command: /app/entrypoint.sh
     environment:
       - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
       - ELMO_DB_HOST=${ELMO_DB_HOST}
@@ -45,7 +44,6 @@ services:
       args:
         shares: /data/shares
         master: test-master
-    command: /app/entrypoint.sh
     environment:
       - ELMO_DB_HOST=${ELMO_DB_HOST}
       - ELMO_DB_NAME=${ELMO_DB_NAME}
