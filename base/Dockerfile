@@ -15,6 +15,7 @@ RUN set -x && \
         gpg --keyserver "$server" --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 && break || : ; \
     done && \
     gpg --batch --verify /tmp/tini.asc /tini && \
+    gpgconf --kill gpg-agent && \
     rm -r "$GNUPGHOME" /tmp/tini.asc && \
     chmod +x /tini
 
