@@ -34,6 +34,11 @@ jobs:
           command: |
             make docker-images
 
+      - run:
+          name: upload docker images
+          command: |
+            ./.circleci/docker-hub-upload elmo-a10n elmo-bb
+
       # - save_cache:
       #     paths:
       #       - ./venv
