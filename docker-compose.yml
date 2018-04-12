@@ -21,6 +21,35 @@ services:
     build:
       context: .
       dockerfile: a10n/Dockerfile
+    image: elmo-a10n
+  hg-poller:
+    command:
+      - bash
+      - -c
+      - . /app/env/bin/activate; cd /app/a10n; rm twistd.pid; PYTHONPATH=. twistd -n --umask 0077 get-pushes
+    image: elmo-a10n
+    environment:
+      - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
+      - ELMO_DB_HOST=${ELMO_DB_HOST}
+      - ELMO_DB_NAME=${ELMO_DB_NAME}
+      - ELMO_DB_USER=${ELMO_DB_USER}
+      - ELMO_DB_PASSWORD=${ELMO_DB_PASSWORD}
+      - ELMO_SECRET_KEY="still just testing"
+      - ELMO_REPOSITORY_BASE=/data/repos
+    volumes:
+     - ./stage/repos:/data/repos
+    links:
+      - rabbitmq
+    depends_on:
+      # rabbitmq:
+      #   condition: service_healthy
+      - hg
+  a10n-hg-worker:
+    command:
+      - bash
+      - -c
+      - . /app/env/bin/activate; cd /app/a10n; ./scripts/a10n hg
+    image: elmo-a10n
     environment:
       - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
       - ELMO_DB_HOST=${ELMO_DB_HOST}
