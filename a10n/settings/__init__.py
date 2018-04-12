@@ -39,6 +39,7 @@ try:
 except KeyError:
     pass
 for local_var, env_var in (
+            ('DATADOG_NAMESPACE', 'ELMO_DATADOG_NAMESPACE'),
             ('SECRET_KEY', 'ELMO_SECRET_KEY'),
             ('REPOSITORY_BASE', 'ELMO_REPOSITORY_BASE'),
             ('TRANSPORT', 'ELMO_TRANSPORT'),

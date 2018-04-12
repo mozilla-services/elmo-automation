@@ -9,6 +9,7 @@ import logging
 
 from kombu import Connection
 from kombu.mixins import ConsumerMixin
+import markus
 
 from .queues import hg_queues
 
@@ -71,6 +72,25 @@ def run(args):
     from django.conf import settings
     import django
     django.setup()
+
+    markus_backends = [
+        {
+            'class': 'markus.backends.logging.LoggingMetrics',
+            'options': {
+                'logger_name': 'markus',
+                'leader': 'ELMO_METRICS',
+            }
+        }
+    ]
+    if hasattr(settings, 'DATADOG_NAMESPACE'):
+        markus_backends.append({
+            'class': 'markus.backends.datadog.DatadogMetrics',
+            'options': {
+                'statsd_namespace': settings.DATADOG_NAMESPACE
+            }
+        })
+    markus.configure(markus_backends)
+    logging.getLogger('markus').setLevel(logging.INFO)
 
     with Connection(settings.TRANSPORT) as conn:
         try:
