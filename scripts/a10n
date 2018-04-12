@@ -14,6 +14,7 @@ site.addsitedir(toplevel)
 parser = argparse.ArgumentParser(description='Trigger l10n automation jobs.')
 parser.add_argument('--settings', default='a10n.settings',
                     help='Override django settings (DEFAULT: a10n.settings)')
+parser.add_argument('--env', help='Activate virtualenv')
 
 subparsers = parser.add_subparsers(dest='cmd',
                                    help='a10n commands')
@@ -28,6 +29,10 @@ parser_hg = subparsers.add_parser('hg', description=hg_desc,
                                   help='Start the hg worker')
 
 args = parser.parse_args()
+
+if args.env:
+    activate_this = os.path.join(args.env, 'bin', 'activate_this.py')
+    exec(open(activate_this).read(), dict(__file__=activate_this))
 
 if args.cmd == 'help':
     if args.command and args.command in subparsers.choices:
