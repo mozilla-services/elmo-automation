@@ -28,7 +28,7 @@ site.addsitedir('vendor-local')
 from kombu import Connection
 from kombu.common import maybe_declare
 from kombu.pools import producers
-from a10n.hg_elmo.queues import hg_exchange
+from a10n.hg_elmo.queues import hg_exchange, hg_queues
 
 
 class Options(usage.Options):
@@ -105,6 +105,38 @@ def getPoller(options):
                 self.sentry = Client(**settings.RAVEN_CONFIG)
             pass
 
+        def wait_for_empty_queue(self):
+            connection = Connection(settings.TRANSPORT)
+            d = defer.Deferred()
+            def check():
+                log.msg('Startup: Checking for empty queues')
+                total_count = 0
+                for queue in hg_queues:
+                    try:
+                        count = (
+                            queue
+                            .bind(connection)
+                            .queue_declare(passive=True)
+                            .message_count
+                        )
+                        log.msg(
+                            'Queue ({}) size: {}'.format(queue.name, count)
+                        )
+                    except Exception as e:
+                        log.msg(
+                            'Queue ({}) failed: {}'.format(queue.name, repr(e))
+                        )
+                        count = 1  # bump
+                    total_count += count
+                if total_count > 0:
+                    log.msg('Not empty, waiting a sec')
+                    reactor.callLater(1, check)
+                else:
+                    log.msg('All queues empty, starting to poll')
+                    d.callback(None)
+            reactor.callLater(0, check)
+            return d
+
         def getURL(self, repo, limit):
             # If we haven't seen this repo yet
             # only store last-known-push if there
@@ -157,6 +189,7 @@ def getPoller(options):
             This iterator doesn't terminate, but gets killed together
             with the service.
             '''
+            yield self.wait_for_empty_queue()
             # get our last-known push IDs for all non-archived repos
             self.latest_push.update(
                 Repository.objects
