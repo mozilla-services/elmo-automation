@@ -37,7 +37,7 @@ jobs:
       - run:
           name: upload docker images
           command: |
-            ./.circleci/docker-hub-upload elmo-a10n elmo-bb
+            ./.circleci/docker-hub-upload elmo_a10n elmo_bb
 
       # - save_cache:
       #     paths:
