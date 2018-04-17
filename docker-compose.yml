@@ -22,13 +22,13 @@ services:
     build:
       context: .
       dockerfile: a10n/Dockerfile
-    image: elmo-a10n
+    image: elmo_a10n
   hg-poller:
     command:
       - bash
       - -c
       - PYTHONPATH=. /app/env/bin/python /app/env/bin/twistd -n --pidfile "" --umask 0077 get-pushes
-    image: elmo-a10n
+    image: elmo_a10n
     environment:
       - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
       - ELMO_DB_HOST=${ELMO_DB_HOST}
@@ -50,7 +50,7 @@ services:
       - bash
       - -c
       - /app/a10n/scripts/a10n --env=/app/env hg
-    image: elmo-a10n
+    image: elmo_a10n
     environment:
       - ELMO_TRANSPORT=amqp://foopy:foopy@rabbitmq:5672
       - ELMO_DB_HOST=${ELMO_DB_HOST}
@@ -69,7 +69,7 @@ services:
       - hg
 
   bb:
-    build: 
+    build:
       context: .
       dockerfile: bb/Dockerfile
       args:

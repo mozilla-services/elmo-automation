@@ -84,10 +84,10 @@ export INI ALL PROPS DTD
 docker-images:: bb-image a10n-image
 
 bb-image:: base-image
-	docker build -t elmo-bb --build-arg shares=/home/app/shares -f bb/Dockerfile .
+	docker build -t elmo_bb --build-arg shares=/home/app/shares -f bb/Dockerfile .
 
 a10n-image:: base-image
-	docker build -t elmo-a10n -f a10n/Dockerfile .
+	docker build -t elmo_a10n -f a10n/Dockerfile .
 
 base-image::
 	docker build -t local/elmo_base -f base/Dockerfile .
