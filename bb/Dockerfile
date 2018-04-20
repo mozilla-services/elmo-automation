@@ -9,6 +9,7 @@ RUN ./venv/bin/pip install -r buildbot.txt
 # uncomment if you want to test master compare-locales
 # RUN ./venv/bin/pip install -U hg+https://hg.mozilla.org/l10n/compare-locales#egg=compare-locales
 COPY ./bb/entrypoint.sh /app
+COPY version.json /app/
 RUN mkdir -p $shares
 RUN chown app:app $shares
 USER app

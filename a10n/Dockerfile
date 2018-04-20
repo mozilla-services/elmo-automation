@@ -4,6 +4,7 @@ RUN pip install -U virtualenv
 RUN virtualenv env
 COPY ./requirements/automation.txt env/requirements.txt
 RUN ./env/bin/pip install -r env/requirements.txt
+COPY version.json /app/
 USER app
 WORKDIR /app/a10n
 COPY --chown=app:app ./vendor-local/vendor.pth ./vendor-local/
