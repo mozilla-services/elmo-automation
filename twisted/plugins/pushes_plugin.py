@@ -164,6 +164,7 @@ def getPoller(options):
                        'pushes': submits}
                 try:
                     producer.publish(msg, exchange=hg_exchange,
+                                     retry=True,
                                      routing_key='hg')
                 except KeyboardInterrupt:
                     raise
