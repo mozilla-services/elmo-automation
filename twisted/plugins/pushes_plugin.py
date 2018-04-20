@@ -158,11 +158,11 @@ def getPoller(options):
         def handlePushes(self, repo_id, submits):
             connection = Connection(settings.TRANSPORT)
             with producers[connection].acquire(block=True) as producer:
-                maybe_declare(hg_exchange, producer.channel, retry=True)
                 msg = {'type': 'hg-push',
                        'repository_id': repo_id,
                        'pushes': submits}
                 try:
+                    maybe_declare(hg_exchange, producer.channel, retry=True)
                     producer.publish(msg, exchange=hg_exchange,
                                      retry=True,
                                      routing_key='hg')
