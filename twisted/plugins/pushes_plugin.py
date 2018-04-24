@@ -18,6 +18,7 @@ from twisted.web.error import Error as WebError
 
 from datetime import datetime
 import os
+import socket
 import json
 
 import site
@@ -157,21 +158,25 @@ def getPoller(options):
 
         def handlePushes(self, repo_id, submits):
             connection = Connection(settings.TRANSPORT)
-            with producers[connection].acquire(block=True) as producer:
-                msg = {'type': 'hg-push',
-                       'repository_id': repo_id,
-                       'pushes': submits}
-                try:
+            msg = {'type': 'hg-push',
+                    'repository_id': repo_id,
+                    'pushes': submits}
+            try:
+                log.msg("Going to connect to rmq")
+                with producers[connection].acquire(block=True, timeout=1) as producer:
+                    log.msg("Connection acquired")
                     maybe_declare(hg_exchange, producer.channel, retry=True)
+                    log.msg("Declared to rmq")
                     producer.publish(msg, exchange=hg_exchange,
                                      retry=True,
                                      routing_key='hg')
-                except KeyboardInterrupt:
-                    raise
-                except Exception:
-                    if self.sentry:
-                        self.sentry.captureException()
-                    raise
+                    log.msg("Published to rmq")
+            except KeyboardInterrupt:
+                raise
+            except Exception:
+                if self.sentry:
+                    self.sentry.captureException()
+                raise
 
         def poll(self):
             '''poll iterates over the repos and updates the local database.
@@ -412,6 +417,7 @@ class MyServiceMaker(object):
         """
         # set umask back to public reading against twistd daemonize
         os.umask(18)
+        socket.setdefaulttimeout(10)  # die if you're down
         HTTPClientFactory.noisy = False
         poller = getPoller(options)
         timer = float(options['time'])
