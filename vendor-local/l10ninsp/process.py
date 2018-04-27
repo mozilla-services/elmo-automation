@@ -13,6 +13,7 @@ from l10ninsp.steps import InspectLocale, ElasticSetup
 
 class Factory(factory.BuildFactory):
     useProgress = False
+    logEnviron = False
 
     def __init__(self, basedir, mastername, steps=None, hg_shares=None):
         factory.BuildFactory.__init__(self, steps)
@@ -29,13 +30,14 @@ class Factory(factory.BuildFactory):
 
     def createSteps(self, request):
         elastic = ((ElasticSetup, {}),)
-        revs = request.properties.getProperty('revisions')
+        properties = request.properties
+        revs = properties['revisions']
         if revs is None:
             revs = ['en', 'l10n']
-            log.msg('no revisions given in ' + str(request.properties))
+            log.msg('no revisions given in ' + str(properties))
         else:
             revs = revs[:]
-        tree = request.properties.getProperty('tree')
+        tree = properties['tree']
         hg_workdir = self.base
         shareSteps = tuple()
         hg = ['hg']
@@ -44,39 +46,44 @@ class Factory(factory.BuildFactory):
             shareSteps = tuple(
                 (ShellCommand, {
                     'command': [
-                        'mkdir', '-p', WithProperties('%%(%s_branch)s' % mod)],
-                    'workdir': hg_workdir
+                        'mkdir', '-p', properties[mod + '_branch']],
+                    'workdir': hg_workdir,
+                    'logEnviron': self.logEnviron
                 })
                 for mod in revs) + tuple(
                 (ShellCommand, {
                     'command': hg + [
                         'share', '-U',
-                        WithProperties(self.base + '/%%(%s_branch)s' % mod),
-                        WithProperties('%%(%s_branch)s' % mod)],
+                        '{}/{}'.format(self.base, properties[mod + '_branch']),
+                        properties[mod + '_branch']],
                     'workdir': hg_workdir,
-                    'flunkOnFailure': False
+                    'flunkOnFailure': False,
+                    'logEnviron': self.logEnviron
                 })
                 for mod in revs)
         sourceSteps = tuple(
             (ShellCommand, {'command':
                             hg + ['update', '-C', '-r',
-                                  WithProperties('%%(%s_revision)s' % mod)],
-                            'workdir': WithProperties(hg_workdir +
-                                                      '/%%(%s_branch)s' % mod),
-                            'haltOnFailure': True})
+                                  properties[mod + '_revision']],
+                            'workdir': '{}/{}'.format(
+                                hg_workdir,
+                                properties[mod + '_branch']
+                            ),
+                            'haltOnFailure': True,
+                            'logEnviron': self.logEnviron})
             for mod in revs)
         redirects = {}
-        for key, value, src in request.properties.asList():
+        for key, value, src in properties.asList():
             if key.startswith('local_'):
                 redirects[key[len('local_'):]] = value
         inspectSteps = (
             (InspectLocale, {
                     'master': self.mastername,
                     'workdir': hg_workdir,
-                    'inipath': WithProperties('%(inipath)s'),
-                    'l10nbase': WithProperties('%(l10nbase)s'),
+                    'inipath': properties['inipath'],
+                    'l10nbase': properties['l10nbase'],
                     'redirects': redirects,
-                    'locale': WithProperties('%(locale)s'),
+                    'locale': properties['locale'],
                     'tree': tree,
                     }),)
         return elastic + shareSteps + sourceSteps + inspectSteps
