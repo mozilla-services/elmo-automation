@@ -417,7 +417,7 @@ class MyServiceMaker(object):
         """
         # set umask back to public reading against twistd daemonize
         os.umask(18)
-        socket.setdefaulttimeout(10)  # die if you're down
+        socket.setdefaulttimeout(120)  # die if you're down
         HTTPClientFactory.noisy = False
         poller = getPoller(options)
         timer = float(options['time'])
