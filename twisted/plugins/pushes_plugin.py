@@ -35,7 +35,7 @@ from a10n.hg_elmo.queues import hg_exchange, hg_queues
 class Options(usage.Options):
     optParameters = [["settings", "s", None,
                       "Django settings module. DEFAULT: a10n.settings"],
-                     ["time", "t", "1", "Poll every n seconds."],
+                     ["time", "t", None, "Poll every n seconds."],
                      ["limit", "l", "200", "Limit pushes to n at a time."]
                      ]
 
@@ -420,7 +420,11 @@ class MyServiceMaker(object):
         socket.setdefaulttimeout(120)  # die if you're down
         HTTPClientFactory.noisy = False
         poller = getPoller(options)
-        timer = float(options['time'])
+        time = '1'
+        time = os.environ.get('ELMO_HG_POLLER_DELAY', time)
+        if options['time'] is not None:
+            time = options['time']
+        timer = float(time)
         s = PacedCooperator(timer)
         s.coiterate(poller)
         return s

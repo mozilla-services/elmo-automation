@@ -37,6 +37,7 @@ services:
       - ELMO_DB_PASSWORD=${ELMO_DB_PASSWORD}
       - ELMO_SECRET_KEY="still just testing"
       - ELMO_REPOSITORY_BASE=/data/repos
+      # - ELMO_HG_POLLER_DELAY=.3
     volumes:
      - ./stage/repos:/data/repos
     links:
