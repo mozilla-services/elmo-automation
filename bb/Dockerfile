@@ -8,6 +8,8 @@ COPY ./requirements/ .
 RUN ./venv/bin/pip install -r buildbot.txt
 # uncomment if you want to test master compare-locales
 # RUN ./venv/bin/pip install -U hg+https://hg.mozilla.org/l10n/compare-locales#egg=compare-locales
+RUN mkdir -p venv/etc/mercurial/hgrc.d
+COPY ./bb/hg_extensions.rc venv/etc/mercurial/hgrc.d
 COPY ./bb/entrypoint.sh /app
 COPY version.json /app/
 RUN mkdir -p $shares

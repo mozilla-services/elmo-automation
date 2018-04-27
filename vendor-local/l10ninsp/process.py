@@ -41,7 +41,6 @@ class Factory(factory.BuildFactory):
         hg = ['hg']
         if self.hg_shares is not None:
             hg_workdir = self.hg_shares
-            hg += ['--config', 'extensions.share=']
             shareSteps = tuple(
                 (ShellCommand, {
                     'command': [
