@@ -72,6 +72,10 @@ class Factory(factory.BuildFactory):
                             'haltOnFailure': True,
                             'logEnviron': self.logEnviron})
             for mod in revs)
+        # Annotate ShellCommands with description and descriptionDone
+        # We're really interested in the full command to be shown
+        for (_, opts) in shareSteps + sourceSteps:
+            opts['description'] = opts['descriptionDone'] = opts['command']
         redirects = {}
         for key, value, src in properties.asList():
             if key.startswith('local_'):
