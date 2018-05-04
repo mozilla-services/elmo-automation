@@ -42,3 +42,8 @@ for local_var, env_var in (
 ):
     if env_var in os.environ:
         locals()[local_var] = os.environ[env_var]
+
+# remove secrets and passwords from environment
+for key in os.environ.keys():
+    if 'SECRET' in key or 'PASSWORD' in key:
+        del os.environ[key]

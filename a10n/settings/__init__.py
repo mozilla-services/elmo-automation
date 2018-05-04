@@ -51,3 +51,8 @@ if 'ELMO_SENTRY_DSN' in os.environ:
     RAVEN_CONFIG = {
         'dsn': os.environ['ELMO_SENTRY_DSN']
     }
+
+# remove secrets and passwords from environment
+for key in os.environ.keys():
+    if 'SECRET' in key or 'PASSWORD' in key:
+        del os.environ[key]
