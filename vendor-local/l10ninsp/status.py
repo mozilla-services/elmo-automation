@@ -10,7 +10,7 @@ from twisted.python import log
 import markus
 
 
-metrics = markus.get_metrics('elmo-builds')
+metrics = markus.get_metrics('builds')
 
 
 class MarkusStatusReceiver(StatusReceiverMultiService):
