@@ -211,7 +211,7 @@ def getPoller(options):
                 if self.start_cycle is not None:
                     lag = n - self.start_cycle
                     log.msg("Cycle took %d seconds" % lag.seconds)
-                    metrics.timing(
+                    metrics.gauge(
                         'cycle_time',
                         lag.seconds * 1000 + lag.microseconds / 1000)
                 self.start_cycle = n
