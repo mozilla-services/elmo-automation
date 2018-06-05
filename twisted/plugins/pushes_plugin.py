@@ -31,6 +31,10 @@ from kombu.common import maybe_declare
 from kombu.pools import producers
 from a10n.hg_elmo.queues import hg_exchange, hg_queues
 
+import markus
+from markus.utils import generate_tag
+metrics = markus.get_metrics('poller')
+
 
 class Options(usage.Options):
     optParameters = [["settings", "s", None,
@@ -207,6 +211,9 @@ def getPoller(options):
                 if self.start_cycle is not None:
                     lag = n - self.start_cycle
                     log.msg("Cycle took %d seconds" % lag.seconds)
+                    metrics.timing(
+                        'cycle_time',
+                        lag.seconds * 1000 + lag.microseconds / 1000)
                 self.start_cycle = n
                 db_connection.close()
                 repos = list(Repository.objects.filter(forest__isnull=True,
