@@ -17,6 +17,7 @@ from twisted.web.client import getPage, HTTPClientFactory
 from twisted.web.error import Error as WebError
 
 from datetime import datetime
+import logging
 import os
 import socket
 import json
@@ -34,6 +35,9 @@ from a10n.hg_elmo.queues import hg_exchange, hg_queues
 import markus
 from markus.utils import generate_tag
 metrics = markus.get_metrics('poller')
+
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 
 class Options(usage.Options):
@@ -87,6 +91,25 @@ def getPoller(options):
     from life.models import Repository, Forest, Locale
     from django.db import connection as db_connection
     from django.db.models import Max
+
+    markus_backends = [
+        {
+            'class': 'markus.backends.logging.LoggingMetrics',
+            'options': {
+                'logger_name': 'markus',
+                'leader': 'ELMO_METRICS',
+            }
+        }
+    ]
+    if hasattr(settings, 'DATADOG_NAMESPACE'):
+        markus_backends.append({
+            'class': 'markus.backends.datadog.DatadogMetrics',
+            'options': {
+                'statsd_namespace': settings.DATADOG_NAMESPACE
+            }
+        })
+    markus.configure(markus_backends)
+    logging.getLogger('markus').setLevel(logging.INFO)
 
     class PushPoller(object):
         '''PushPoller stores the state of our coopertive iterator.
