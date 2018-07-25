@@ -1,6 +1,6 @@
 # python requirements for automation
 # mercurial version tied to what automation supports
-mercurial==4.2.2
+mercurial==4.6.2
 python-hglib==2.5
 Django==1.11.10
 six==1.10.0

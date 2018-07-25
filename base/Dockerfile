@@ -1,5 +1,5 @@
 # Not using -slim, as Axel can't figure out where to get packages there.
-FROM python:2.7.14-stretch
+FROM python:2.7.15-stretch
 
 ENV TINI_VERSION v0.17.0
 RUN set -x && \
