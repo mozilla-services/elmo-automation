@@ -11,6 +11,11 @@ from twisted.internet.task import LoopingCall
 from buildbot.status.builder import EXCEPTION
 from buildbot.changes import base, changes
 
+import markus
+
+
+metrics = markus.get_metrics('builds')
+
 
 def createChangeSource(pollInterval=3*60):
     from life.models import Push, Branch, File
@@ -44,6 +49,7 @@ def createChangeSource(pollInterval=3*60):
                         Push.objects
                         .filter(pk__gt=self.latest)
                         .order_by('pk'))
+                    metrics.gauge('new_pushes', new_pushes.count())
                     if self.debug:
                         log.msg('mbdb changesource found %d pushes after %d' %
                                 (new_pushes.count(), self.latest))
