@@ -187,7 +187,7 @@ class TreeLoader(BuildStep):
         self.endLoad()
 
     def loadIni(self, repo, branch, path, alllocales="no"):
-        url = repo + '/' + branch + '/raw-file/default/' + path
+        url = repo + branch + '/raw-file/default/' + path
         self.getLog('stdio').addStdout('\nloading %s\n' % url)
         self.step_status.setText(['loading', 'l10n.ini'])
         self.step_status.setText2([repo, branch, path])
@@ -262,7 +262,7 @@ class TreeLoader(BuildStep):
                              (self.tree.name, allpath))
                 self.pending += 1
                 request = urllib2.Request(
-                    repo + '/' + branch + '/raw-file/default/' + allpath,
+                    repo + branch + '/raw-file/default/' + allpath,
                     headers=self.headers)
                 content = urllib2.urlopen(request, timeout=self.timeout).read()
                 self.allLocalesLoaded(content)
