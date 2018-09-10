@@ -39,11 +39,12 @@ stage/hgmo/%:
 	mkdir -p stage/hgmo/$(dir $*)
 	hg init stage/hgmo/$*
 
-content-en-US: stage/workdir/mozilla stage/workdir/mozilla/browser/locales/l10n.ini
+content-en-US: stage/workdir/mozilla stage/workdir/mozilla/browser/locales/l10n.toml
 
-stage/workdir/mozilla/browser/locales/l10n.ini: AB_CD=en-US
-stage/workdir/mozilla/browser/locales/l10n.ini: stage/venv/bin/hg
+stage/workdir/mozilla/browser/locales/l10n.toml: AB_CD=en-US
+stage/workdir/mozilla/browser/locales/l10n.toml: stage/venv/bin/hg
 	mkdir -p stage/workdir/mozilla/browser/locales/en-US
+	echo "$$TOML" > stage/workdir/mozilla/browser/locales/l10n.toml
 	echo "$$INI" > stage/workdir/mozilla/browser/locales/l10n.ini
 	echo "$$ALL" > stage/workdir/mozilla/browser/locales/all-locales
 	echo "$$PROPS" > stage/workdir/mozilla/browser/locales/en-US/file.properties
@@ -69,16 +70,35 @@ all = browser/locales/all-locales
 [compare]
 dirs = browser
 endef
+
 define ALL
 de
 endef
+
+define TOML
+basepath = "../.."
+
+locales = [
+    "de",
+    "fr",
+]
+[env]
+    l = "{l10n_base}/{locale}/"
+
+[[paths]]
+    reference = "browser/locales/en-US/**"
+    l10n = "{l}browser/**"
+endef
+
 define PROPS
 some_id: $(AB_CD) value
 endef
+
 define DTD
 <!ENTITY entry "$(AB_CD) value">
 endef
-export INI ALL PROPS DTD
+
+export TOML INI ALL PROPS DTD
 
 
 docker-images:: bb-image a10n-image
