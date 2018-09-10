@@ -158,9 +158,7 @@ class InspectCommand(Command):
                                          os.path.join(workingdir, l10nbase),
                                          redirects,
                                          [locale])
-            observers = compareProjects(
-                [app.asConfig()],
-                file_stats=True)
+            observers = compareProjects([app.asConfig()])
         except Exception as e:
             log.msg(e)
             raise
