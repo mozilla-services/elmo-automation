@@ -12,7 +12,7 @@ RUN set -x && \
                             hkp://keyserver.ubuntu.com:80 \
                             pgp.mit.edu) ; do \
         echo trying $server ; \
-        gpg --keyserver "$server" --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 && break || : ; \
+        gpg --batch --keyserver "$server" --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 && break || : ; \
     done && \
     gpg --batch --verify /tmp/tini.asc /tini && \
     gpgconf --kill gpg-agent && \
