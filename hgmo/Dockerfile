@@ -2,4 +2,4 @@ FROM python:2.7
 WORKDIR /app
 ADD webdir.conf /app/
 ADD etc/mercurial/hgrc /etc/mercurial/hgrc.d/mozilla.rc
-RUN pip install mercurial==4.6.2
+RUN pip install mercurial==4.8.1

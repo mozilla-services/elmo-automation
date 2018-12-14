@@ -73,7 +73,7 @@ class InspectCommand(Command):
                 log.msg("no changeset found for %s" % rev)
         workingdir = os.path.join(self.builder.basedir, workdir)
         try:
-            observers = self._compare(workingdir, locale, args)
+            observerlist = self._compare(workingdir, locale, args)
         except Exception, e:
             log.msg('%s comparison failed with %s' % (locale, str(e)))
             log.msg(Failure().getTraceback())
@@ -81,7 +81,7 @@ class InspectCommand(Command):
             return
         self.rc = SUCCESS
         tree = Tree.objects.get(code=self.args['tree'])
-        for observer in observers:
+        for observer in observerlist.observers:
             try:
                 self.report_compare_locales(build, revs, loc, tree, observer)
             except Exception, e:
@@ -89,6 +89,16 @@ class InspectCommand(Command):
                 self.rc = EXCEPTION
             if self.rc == EXCEPTION:
                 return
+        try:
+            self.sendStatus({
+                'stdout': codecs.utf_8_encode(
+                    observerlist.serializeDetails()
+                )[0]
+            })
+        except Exception, e:
+            log.msg('%s status sending failed with %s' % (loc.code, str(e)))
+            self.rc = EXCEPTION
+            return
 
     def report_compare_locales(self, build, revs, loc, tree, observer):
         '''Add the results of compare-locales for a particular tree
@@ -126,13 +136,6 @@ class InspectCommand(Command):
         dbrun.revisions.set(revs)
         dbrun.save()
         dbrun.activate()
-        try:
-            self.sendStatus({
-                'stdout': codecs.utf_8_encode(observer.serialize())[0]})
-        except Exception, e:
-            log.msg('%s status sending failed with %s' % (loc.code, str(e)))
-            self.rc = EXCEPTION
-            return
         es = elasticsearch.Elasticsearch(hosts=settings.ES_COMPARE_HOST)
         # create our ES document to index in ES
         body = {
@@ -158,11 +161,14 @@ class InspectCommand(Command):
                                          os.path.join(workingdir, l10nbase),
                                          redirects,
                                          [locale])
-            observers = compareProjects([app.asConfig()])
+            observerlist = compareProjects(
+                [app.asConfig()],
+                os.path.join(workingdir, l10nbase),
+            )
         except Exception as e:
             log.msg(e)
             raise
-        return observers
+        return observerlist
 
     def finished(self, *args):
         # sometimes self.rc isn't set here, no idea why
