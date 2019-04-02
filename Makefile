@@ -8,7 +8,7 @@ VCT ?= ~/.mozbuild/version-control-tools
 # virtualenv to be used to commit and push in the working dir
 stage/venv:
 	virtualenv stage/venv
-	./stage/venv/bin/pip install mercurial==4.6.2
+	./stage/venv/bin/pip install mercurial==4.8.1
 	mkdir -p stage/venv/etc/mercurial/hgrc.d
 	echo "$$HGRC" > stage/venv/etc/mercurial/hgrc.d/hgmo.rc
 
