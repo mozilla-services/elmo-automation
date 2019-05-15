@@ -19,6 +19,7 @@ from django.db import connection
 from life.models import Tree as ElmoTree, Repository, Forest, Push
 
 import logger
+from six.moves.urllib_parse import urljoin
 import util
 
 
@@ -346,8 +347,9 @@ class AppScheduler(BaseUpstreamScheduler):
             if change.revision is not None:
                 rev = change.revision
             _t = self.trees[_n]
-            url = _t.repo + '/' + _t.branches['en'] + '/raw-file/' + rev
-            url += '/' + _t.all_locales
+            url = urljoin(_t.repo, '{}/raw-file/{}/{}'.format(
+                _t.branches['en'], rev, _t.all_locales
+            ))
             request = urllib2.Request(url, headers=self.headers)
             page = urllib2.urlopen(request, timeout=self.timeout).read()
             self.onAllLocales(page, _n, change)

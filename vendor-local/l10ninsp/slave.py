@@ -159,10 +159,10 @@ class InspectCommand(Command):
             app = EnumerateSourceTreeApp(os.path.join(workingdir, inipath),
                                          workingdir,
                                          os.path.join(workingdir, l10nbase),
-                                         redirects,
-                                         [locale])
+                                         redirects)
             observerlist = compareProjects(
                 [app.asConfig()],
+                [locale],
                 os.path.join(workingdir, l10nbase),
             )
         except Exception as e:
