@@ -192,9 +192,12 @@ def getPoller(options):
                 log.msg("Going to connect to rmq")
                 with producers[connection].acquire(block=True, timeout=1) as producer:
                     log.msg("Connection acquired")
-                    maybe_declare(hg_exchange, producer.channel, retry=True)
+                    exchange = hg_exchange
+                    if not exchange.is_bound:
+                        exchange = exchange.bind(producer.channel)
+                    maybe_declare(exchange, retry=True)
                     log.msg("Declared to rmq")
-                    producer.publish(msg, exchange=hg_exchange,
+                    producer.publish(msg, exchange=exchange,
                                      retry=True,
                                      routing_key='hg')
                     log.msg("Published to rmq")
