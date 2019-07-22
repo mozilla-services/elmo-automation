@@ -1,5 +1,5 @@
 mercurial==4.9.1
-Django==1.11.20
+Django==1.11.22
 #Twisted==8.2.0
 ./zope.interface-4.4.3-cp27-cp27mu-manylinux1_x86_64.whl
 ./Twisted-8.2.0-cp27-cp27mu-linux_x86_64.whl
