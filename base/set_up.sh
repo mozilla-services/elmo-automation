@@ -23,6 +23,8 @@ apt-get install -y gcc apt-transport-https build-essential python-dev \
         libmariadbclient-dev \
         git
 
+pip install -U pip wheel setuptools
+
 # Stomp on the bash prompt with something more useful for development.
 cat > /etc/bash.bashrc <<EOF
 # Get the name for the current uid and drop error messages.
