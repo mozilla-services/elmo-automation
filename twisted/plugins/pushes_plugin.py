@@ -233,7 +233,7 @@ def getPoller(options):
                 .annotate(last_push=Max('push__push_id'))
                 .values_list('id', 'last_push'))
             while True:
-                n = datetime.now()
+                n = datetime.utcnow()
                 if self.start_cycle is not None:
                     lag = n - self.start_cycle
                     log.msg("Cycle took %d seconds" % lag.seconds)
